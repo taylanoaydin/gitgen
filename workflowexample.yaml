@@ -1,0 +1,49 @@
+name: Sync to Target Repository
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_repo:
+        description: 'Target Repository'
+        required: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: make temp dir
+      run: |
+        mkdir temp
+      
+    - name: Checkout Source Repository
+      uses: actions/checkout@v2
+      with:
+        path: 'temp'
+
+    - name: Init Git stuff
+      run: |
+        git config --global user.name 'talentsiv'
+        git config --global user.email 'talentsiv2023@gmail.com'
+
+    - name: Clone
+      env:
+        TARGET_REPO_PAT: ${{ secrets.API_TOKEN_GITHUB }}
+      run: |
+        git clone https://x-access-token:${TARGET_REPO_PAT}@github.com/talentsiv/${{ github.event.inputs.target_repo }}.git
+        pwd
+        ls
+
+    - name: Copy
+      run: |
+        rsync -av --exclude='.git*' temp/ ${{ github.event.inputs.target_repo }}/
+        # Debug: List contents of the current directory
+        ls -la
+
+    - name: Clone
+      run: |
+        cd ${{ github.event.inputs.target_repo }}
+        git add .
+        git commit -m "Setup" || true
+        git push origin main
+
