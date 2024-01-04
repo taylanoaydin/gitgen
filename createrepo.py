@@ -29,7 +29,7 @@ def main():
     user = g.get_user()
 
     # Generate a unique name using the current timestamp
-    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S") + args.username
 
     # Create a hash of the timestamp
     hash_object = hashlib.sha256(timestamp.encode())
