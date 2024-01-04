@@ -4,20 +4,9 @@ from dotenv import load_dotenv
 from datetime import datetime
 import hashlib
 import requests
-import argparse
+#import argparse
 
-def main():
-    parser = argparse.ArgumentParser(description='Create a new repository and trigger the workflow.',
-                                    prog='createrepo')
-    parser.add_argument('testname', metavar='testname', type=str, help='Base test name to be used for the repo')
-    parser.add_argument('username', metavar='username', type=str, help='Github username to be added as collaborator')
-
-    try:
-        args = parser.parse_args()
-    except Exception as e:
-        print(e)
-        exit(2)
-
+def main(tst, cusr):
     # Load the .env file and get the PAT
     load_dotenv()
     PAT = os.environ.get("PAT")
@@ -29,7 +18,7 @@ def main():
     user = g.get_user()
 
     # Generate a unique name using the current timestamp
-    timestamp = datetime.now().strftime("%Y%m%d%H%M%S") + args.username
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S") + cusr
 
     # Create a hash of the timestamp
     hash_object = hashlib.sha256(timestamp.encode())
@@ -40,7 +29,7 @@ def main():
 
     # Create a new private repository
     new_repo = user.create_repo(
-        name= args.testname + "-" + repo_name,  # Replace with your desired repo name
+        name= tst + "-" + repo_name,  # Replace with your desired repo name
         private=True,  # Set to False if you want the repo to be public
         auto_init=True  # Initialize with a README (set to False if not needed)
     )
@@ -48,7 +37,7 @@ def main():
     print(f"Repository created: {new_repo.html_url}")
 
     # Username of the person you want to invite
-    collaborator_username = args.username
+    collaborator_username = cusr
 
     # Send an invitation to collaborate on the repository
     invitation = new_repo.add_to_collaborators(collaborator_username, permission="push")
@@ -62,7 +51,7 @@ def main():
 
     # Set up the API URL for triggering the workflow
     owner = "talentsiv"  # Replace with your GitHub username or organization
-    repo = args.testname + "-" + "base"  # Replace with your repository name
+    repo = tst + "-" + "base"  # Replace with your repository name
     workflow_file_name = "main.yml"  # Replace with your workflow file name
     api_url = f"https://api.github.com/repos/{owner}/{repo}/actions/workflows/{workflow_file_name}/dispatches"
 
@@ -92,6 +81,7 @@ def main():
 
     # Close the Github object after use
     g.close()
+    return new_repo.html_url
 
 if __name__ == '__main__':
     main()

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>talentSiv</title>
+   </head>
+   <body>
+      <h1>Login to talentSiv</h1>
+      <!-- Use post instead of get for security. -->
+      <form action="/handlelogin" method="post">
+         <table>
+            <tr>
+               <td style="text-align:right">Passkey:</td>
+               <td><input type="password" name="passkey"
+                  required pattern="\S+"
+                  title="No white-space chars">
+               <td>
+            </tr>
+            <tr>
+               <td></td>
+               <td><input type="submit" value="Go"></td>
+            </tr>
+         </table>
+      </form>
+      <br>
+      <strong>{{error_msg}}</strong>
+   </body>
+</html>

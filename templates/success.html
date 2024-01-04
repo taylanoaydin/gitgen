@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Success</title>
+    <style>
+        /* Add any additional styling you want here */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 50%;
+            margin: auto;
+            padding-top: 50px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Repository Created Successfully</h1>
+        <p>Your GitHub repository has been created.</p>
+        {% if giturl %}
+            <p>Here is your GitHub repository URL:</p>
+            <a href="{{ giturl }}">{{ giturl }}</a>
+        {% else %}
+            <p>Error: No URL provided.</p>
+        {% endif %}
+    </div>
+</body>
+</html>
