@@ -9,7 +9,7 @@ import argparse
 def main():
     parser = argparse.ArgumentParser(description='Create a new repository and trigger the workflow.',
                                     prog='createrepo')
-
+    parser.add_argument('testname', metavar='testname', type=str, help='Base test name to be used for the repo')
     parser.add_argument('username', metavar='username', type=str, help='Github username to be added as collaborator')
 
     try:
@@ -40,7 +40,7 @@ def main():
 
     # Create a new private repository
     new_repo = user.create_repo(
-        name="clientsuccess-" + repo_name,  # Replace with your desired repo name
+        name= args.testname + "-" + repo_name,  # Replace with your desired repo name
         private=True,  # Set to False if you want the repo to be public
         auto_init=True  # Initialize with a README (set to False if not needed)
     )
@@ -62,7 +62,7 @@ def main():
 
     # Set up the API URL for triggering the workflow
     owner = "talentsiv"  # Replace with your GitHub username or organization
-    repo = "clientsuccess-base"  # Replace with your repository name
+    repo = args.testname + "-" + "base"  # Replace with your repository name
     workflow_file_name = "main.yml"  # Replace with your workflow file name
     api_url = f"https://api.github.com/repos/{owner}/{repo}/actions/workflows/{workflow_file_name}/dispatches"
 
