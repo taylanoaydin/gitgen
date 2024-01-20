@@ -4,8 +4,8 @@ from dotenv import load_dotenv
 from datetime import datetime
 import hashlib
 import requests
-#import argparse
 
+# gets the base repo name and the collaborator username as arguments
 def main(tst, cusr):
     # Load the .env file and get the PAT
     load_dotenv()
@@ -13,14 +13,10 @@ def main(tst, cusr):
 
     # Authenticate with GitHub using the PAT
     g = Github(PAT)
-
-    # User who will own the new repo (should be the same user as the PAT)
     user = g.get_user()
 
-    # Generate a unique name using the current timestamp
+    # Generate a unique name using the current timestamp and username
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S") + cusr
-
-    # Create a hash of the timestamp
     hash_object = hashlib.sha256(timestamp.encode())
     hex_dig = hash_object.hexdigest()
 
@@ -29,9 +25,9 @@ def main(tst, cusr):
 
     # Create a new private repository
     new_repo = user.create_repo(
-        name= tst + "-" + repo_name,  # Replace with your desired repo name
-        private=True,  # Set to False if you want the repo to be public
-        auto_init=True  # Initialize with a README (set to False if not needed)
+        name= tst + "-" + repo_name,  # creates a unique repo name using the base name and the hash
+        private=True,  
+        auto_init=True 
     )
 
     print(f"Repository created: {new_repo.html_url}")
@@ -50,9 +46,9 @@ def main(tst, cusr):
     print(f"Collaborator added: {new_repo.html_url}")
 
     # Set up the API URL for triggering the workflow
-    owner = "talentsiv"  # Replace with your GitHub username or organization
-    repo = tst + "-" + "base"  # Replace with your repository name
-    workflow_file_name = "main.yml"  # Replace with your workflow file name
+    owner = "talentsiv"  # Replace with the owner of the base repository
+    repo = tst + "-" + "base"  # Assumes existence of tst + "-base" repo owned by owner
+    workflow_file_name = "main.yml" # Assumes main.yml workflow file in the base repo
     api_url = f"https://api.github.com/repos/{owner}/{repo}/actions/workflows/{workflow_file_name}/dispatches"
 
     # The headers for authorization and accepting the JSON response
@@ -63,7 +59,7 @@ def main(tst, cusr):
 
     # The data payload with the reference and inputs for the workflow
     data = {
-        "ref": "main",  # Branch to trigger the workflow on
+        "ref": "main",
         "inputs": {
             'target_repo': "clientsuccess-" + repo_name
         }
